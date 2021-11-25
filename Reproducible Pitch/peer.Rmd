@@ -1,0 +1,68 @@
+---
+title: "Peer graded assignment week 4"
+author: "Arko C."
+date: "11/25/2021"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Coursera Peer Graded Assignment Reproducible Pitch
+
+In this assignment, I prepared a shiny application and the link is :
+
+[{https://arko.shinyapps.io/test/}]
+
+Also, the codes of server.R and ui.R are on the link:
+
+[{https://github.com/arko/dataproducts_week4}]
+
+
+## Dataset
+```{r mtcars, echo = TRUE}
+head(mtcars)
+```
+
+## ui.R
+
+```{r ,eval=FALSE,echo=TRUE}
+library(shiny)
+shinyUI(fluidPage(
+  titlePanel("mtcars dataset for linear relationship of 
+             variables with respect to miles per gallon"),
+  sidebarPanel(
+    selectInput("variable", "Feature:", 
+                c("Cylinders" = "cyl",
+                  "Horsepower" = "hp",
+                  "Weight" = "wt"))
+  ),
+  mainPanel(
+    h3(textOutput("caption")),
+    plotOutput("mpgPlot"),
+    p("An inverse relationship can be observed")
+  )
+))
+```
+
+## server.R
+```{r ,eval=FALSE,echo=TRUE}
+library(shiny)
+library(plotly)
+shinyServer(function(input, output) {
+  
+  formulaText <- reactive({
+    paste("mpg (miles per gallon) vs ", input$variable)
+  })
+  
+  output$caption <- renderText({
+    formulaText()
+  })
+  output$mpgPlot <- renderPlot({
+    ggplot(mtcars, aes_string(y=input$variable, x="mpg")) + geom_point() +
+      stat_smooth(method = "lm", col = "pink")
+  })
+  
+})
+```
